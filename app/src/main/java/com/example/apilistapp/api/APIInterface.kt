@@ -1,21 +1,21 @@
 package com.example.apilistapp.api
 
 import com.example.apilistapp.models.Cards
-import com.example.apilistapp.models.CardsItem
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Url
+import retrofit2.http.Path
 
 
 interface APIInterface {
-    @GET("sets/vanilla")
-
+    @GET("sets/Classic")
     suspend fun getCards(): Response<Cards>
+
+    @GET("{name}")
+    suspend fun getCard(@Path("name") name: String):Response<Cards>
 
     companion object {
                 val BASE_URL = "https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/"

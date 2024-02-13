@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.ui.theme.ApiListAppTheme
+import com.example.apilistapp.view.DetailedScreen
 import com.example.apilistapp.view.RecyclerView
 import com.example.apilistapp.viewmodel.APIViewModel
 
@@ -34,6 +35,8 @@ class MainActivity : ComponentActivity() {
                         navController = navigationController,
                         startDestination = Routes.List.route){
                         composable(Routes.List.route){ RecyclerView(navigationController, apiViewModel) }
+                        composable(Routes.Detailed.route){ DetailedScreen(navigationController, apiViewModel) }
+
                     }
                 }
             }
