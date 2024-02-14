@@ -1,22 +1,27 @@
 package com.example.apilistapp.api
 
+import com.example.apilistapp.models.Character
 import com.example.apilistapp.models.HSCards
+import com.example.apilistapp.models.Ninja
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 
 interface APIInterface {
-    @GET("")
-    suspend fun getCards(): Response<HSCards>
+    @GET("/characters")
+    suspend fun getCharacters(): Response<Ninja>
 
 //    @GET("{name}")
 //    suspend fun getCard(@Path("name") name: String):Response<Cards>
+    @GET ("/characters/{id}")
+    suspend fun getCharacter(@Path("id") id: Int) : Response<Ninja>
 
     companion object {
-                val BASE_URL = "https://api.hearthstonejson.com/v1/"
+                val BASE_URL = "https://dattebayo-api.onrender.com"
 //        fun crete(): APIInterface {
 //            val client = OkHttpClient.Builder().apply {
 //                addInterceptor(

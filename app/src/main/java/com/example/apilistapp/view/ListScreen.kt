@@ -1,10 +1,10 @@
 package com.example.apilistapp.view
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,22 +24,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.example.apilistapp.R
-import com.example.apilistapp.models.HSCardsItem
+import com.bumptech.glide.integration.compose.GlideImage
+import com.example.apilistapp.models.Character
+import com.example.apilistapp.models.Ninja
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.viewmodel.APIViewModel
 
 @Composable
 fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
     val showLoading: Boolean by apiViewModel.loading.observeAsState(true)
-    val cards: ArrayList<HSCardsItem> by apiViewModel.cards.observeAsState(ArrayList<HSCardsItem>())
-    apiViewModel.getCards()
+    val characters: Ninja by apiViewModel.characters.observeAsState(Ninja(emptyList()))
+    apiViewModel.getNinjas()
     if (showLoading) {
         CircularProgressIndicator(
             modifier = Modifier
@@ -47,18 +47,20 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
             color = MaterialTheme.colorScheme.secondary
         )
     } else {
-        LazyColumn(modifier = Modifier
-          ) {
-            items(cards) {
-                CardItem(card = it, apiViewModel, navController)
+        LazyColumn(
+            modifier = Modifier
+        ) {
+            items(characters.characters) {
+                CharacterItem(character = it, apiViewModel, navController)
             }
         }
     }
 }
 
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CardItem(card: HSCardsItem, apiViewModel:APIViewModel, navController: NavController) {
+fun CharacterItem(character: Character, apiViewModel: APIViewModel, navController: NavController) {
     Card(
         border = BorderStroke(
             2.dp,
@@ -69,58 +71,45 @@ fun CardItem(card: HSCardsItem, apiViewModel:APIViewModel, navController: NavCon
             .padding(8.dp)
             .clickable {
                 navController.navigate(Routes.Detailed.route)
-                apiViewModel.set_Id(apiViewModel.id)
+                apiViewModel.set_Id(character.id)
             }
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
-            Image(
-                painter = painterResource(
-                    id = R.drawable.background
-                ),
-                contentDescription = "bg",
-                modifier = Modifier
-                    .fillMaxWidth()
-                ,
-                contentScale = ContentScale.Crop
-            )
-
 
             Row(
                 modifier = Modifier
-                    .padding(16.dp)
+//                    .padding(16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-//                val image = card.img ?: "default"
-//                if (image != "default") {
-//                    GlideImage(
-//                        model = card.img,
-//                        contentDescription = "Card Image",
-//                        contentScale = ContentScale.Inside,
-//                    )
-//                } else {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.empty),
-//                        contentDescription = "empty"
-//                    )
-//                }
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(47, 18, 12, 188)),
+                Column {
+                    GlideImage(
+                        model = character.images[0],
+                        contentDescription = "Card Image",
 
-                    ){
-                    Text(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        text = card.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        fontSize = 25.sp,
-                        color = Color(255,255,255)
+                        contentScale = ContentScale.Crop,
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(47, 18, 12, 188)),
+
+                        ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            text = character.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = apiViewModel.font,
+                            textAlign = TextAlign.Center,
+                            fontSize = 25.sp,
+                            color = Color(255, 255, 255)
+                        )
+                    }
                 }
 
 

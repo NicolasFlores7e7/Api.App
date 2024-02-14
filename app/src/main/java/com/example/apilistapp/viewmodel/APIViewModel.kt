@@ -1,10 +1,13 @@
 package com.example.apilistapp.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.apilistapp.R
 import com.example.apilistapp.api.Repository
-import com.example.apilistapp.models.HSCards
+import com.example.apilistapp.models.Ninja
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,19 +16,18 @@ import kotlinx.coroutines.withContext
 class APIViewModel : ViewModel() {
     private val repository = Repository()
     private val _loading = MutableLiveData(true)
+    val font = FontFamily(Font(R.font.njnaruto))
     val loading = _loading
-    private val _cards = MutableLiveData<HSCards>()
-    val cards = _cards
-    private val _card = MutableLiveData<HSCards>()
-    val card = _card
-    var id = ""
+    private val _characters = MutableLiveData<Ninja>()
+    val characters = _characters
+    var id = 0
 
-    fun getCards() {
+    fun getNinjas() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getAllCards()
+            val response = repository.getAllNinjas()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-                    _cards.value = response.body()
+                    _characters.value = response.body()
                     _loading.value = false
                 } else {
                     Log.e("Error:", response.message())
@@ -34,21 +36,21 @@ class APIViewModel : ViewModel() {
         }
     }
 
-//    fun getCard(id: String) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val response = repository.getDetailedCard(id)
-//            withContext(Dispatchers.Main){
-//                if (response.isSuccessful){
-//                    _card.value = response.body()
-//                    _loading.value = false
-//                }else{
-//                    Log.e("Error: ", response.message())
-//                }
-//            }
-//        }
-//    }
+    fun getNinja(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = repository.getDetailedNinja(id)
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    _characters.value = response.body()
+                    _loading.value = false
+                } else {
+                    Log.e("Error: ", response.message())
+                }
+            }
+        }
+    }
 
-    fun set_Id(id:String){
+    fun set_Id(id: Int) {
         this.id = id
     }
 }

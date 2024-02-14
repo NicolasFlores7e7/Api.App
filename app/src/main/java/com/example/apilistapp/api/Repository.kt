@@ -1,7 +1,9 @@
 package com.example.apilistapp.api
 
+import com.example.apilistapp.viewmodel.APIViewModel
+
 class Repository {
     val apiInterface = APIInterface.create()
-    suspend fun getAllCards() = apiInterface.getCards()
-//    suspend fun getDetailedCard(id: String) = apiInterface.getCard(id)
+    suspend fun getAllNinjas() = apiInterface.getCharacters()
+    suspend fun getDetailedNinja(id: Int) = apiInterface.getCharacter(0)
 }
