@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.apilistapp.api.Repository
-import com.example.apilistapp.models.Cards
+import com.example.apilistapp.models.HSCards
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,15 +14,15 @@ class APIViewModel : ViewModel() {
     private val repository = Repository()
     private val _loading = MutableLiveData(true)
     val loading = _loading
-    private val _cards = MutableLiveData<Cards>()
+    private val _cards = MutableLiveData<HSCards>()
     val cards = _cards
-    private val _card = MutableLiveData<Cards>()
+    private val _card = MutableLiveData<HSCards>()
     val card = _card
-    var name = ""
+    var id = ""
 
     fun getCards() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getAllVanillaCards()
+            val response = repository.getAllCards()
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     _cards.value = response.body()
@@ -34,21 +34,21 @@ class APIViewModel : ViewModel() {
         }
     }
 
-    fun getCard(name: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getDetailedCard(name)
-            withContext(Dispatchers.Main){
-                if (response.isSuccessful){
-                    _card.value = response.body()
-                    _loading.value = false
-                }else{
-                    Log.e("Error: ", response.message())
-                }
-            }
-        }
-    }
+//    fun getCard(id: String) {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val response = repository.getDetailedCard(id)
+//            withContext(Dispatchers.Main){
+//                if (response.isSuccessful){
+//                    _card.value = response.body()
+//                    _loading.value = false
+//                }else{
+//                    Log.e("Error: ", response.message())
+//                }
+//            }
+//        }
+//    }
 
-    fun set_Name(name:String){
-        this.name = name
+    fun set_Id(id:String){
+        this.id = id
     }
 }
