@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.apilistapp.R
 import com.example.apilistapp.api.Repository
+import com.example.apilistapp.models.Character
 import com.example.apilistapp.models.Ninja
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,10 @@ class APIViewModel : ViewModel() {
     val loading = _loading
     private val _characters = MutableLiveData<Ninja>()
     val characters = _characters
+    private val _character = MutableLiveData<Character>()
+    val character = _character
     var id = 0
+
 
     fun getNinjas() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -36,9 +40,9 @@ class APIViewModel : ViewModel() {
         }
     }
 
-    fun getNinja(id: Int) {
+    fun getNinja() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getDetailedNinja(id)
+            val response = repository.getDetailedNinja(get_Id())
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     _characters.value = response.body()
@@ -52,5 +56,8 @@ class APIViewModel : ViewModel() {
 
     fun set_Id(id: Int) {
         this.id = id
+    }
+    fun get_Id():Int {
+        return id
     }
 }

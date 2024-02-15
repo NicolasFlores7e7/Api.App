@@ -1,7 +1,5 @@
 package com.example.apilistapp.api
 
-import com.example.apilistapp.models.Character
-import com.example.apilistapp.models.HSCards
 import com.example.apilistapp.models.Ninja
 import okhttp3.OkHttpClient
 import retrofit2.Response
