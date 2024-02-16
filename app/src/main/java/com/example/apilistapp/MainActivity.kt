@@ -7,18 +7,16 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.ui.theme.ApiListAppTheme
+import com.example.apilistapp.view.CharacterData
 import com.example.apilistapp.view.DetailedScreen
+import com.example.apilistapp.view.FavouritesScreen
 import com.example.apilistapp.view.MainScreen
-import com.example.apilistapp.view.RecyclerView
 import com.example.apilistapp.viewmodel.APIViewModel
 
 class MainActivity : ComponentActivity() {
@@ -37,6 +35,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Routes.List.route){
                         composable(Routes.List.route){ MainScreen(navigationController, apiViewModel) }
                         composable(Routes.Detailed.route){ DetailedScreen(navigationController, apiViewModel) }
+                        composable(Routes.Favourites.route){ FavouritesScreen(navigationController, apiViewModel) }
 
                     }
                 }

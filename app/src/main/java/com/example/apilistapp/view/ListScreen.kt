@@ -45,58 +45,64 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.apilistapp.R
 import com.example.apilistapp.models.Characters
 import com.example.apilistapp.models.Result
+import com.example.apilistapp.navigation.BottomNavScreens
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.viewmodel.APIViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController, apiViewModel: APIViewModel){
+fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
+   val bottomNavItems = apiViewModel.bottomNavItems
     Scaffold(
         topBar = { TopBar(apiViewModel) },
-        bottomBar = { BottomBar(apiViewModel)},
+        bottomBar = { BottomBar(navController, bottomNavItems) },
         content = { paddingValues ->
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.bg),
                     contentDescription = "bg",
-                    contentScale = ContentScale.FillBounds)
-                RecyclerView(navController,apiViewModel)
+                    contentScale = ContentScale.FillBounds
+                )
+                RecyclerView(navController, apiViewModel)
             }
         }
     )
 }
+
 @Composable
 fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
     val showLoading: Boolean by apiViewModel.loading.observeAsState(true)
     val characters: Characters by apiViewModel.characters.observeAsState(Characters(emptyList()))
     apiViewModel.getCharacters()
     if (showLoading) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-            ){
+        ) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .width(32.dp),
-                color =Color(0xFF916036),
-                )
+                color = Color(0xFF916036),
+            )
             Text(
                 text = "Loading...",
                 fontFamily = apiViewModel.font,
                 fontSize = 64.sp,
-                color =Color(0xFF916036)
+                color = Color(0xFF916036)
 
-                )
+            )
         }
 
     } else {
@@ -135,7 +141,7 @@ fun CharacterItem(character: Result, apiViewModel: APIViewModel, navController: 
 
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()                ,
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
@@ -170,83 +176,62 @@ fun CharacterItem(character: Result, apiViewModel: APIViewModel, navController: 
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(apiViewModel: APIViewModel) {
     TopAppBar(
-        title = { Text(
-            text = "Rick & Morty",
-            fontFamily = apiViewModel.font
-        ) },
+        title = {
+            Text(
+                modifier = Modifier
+                    .padding(32.dp),
+                text = "Rick & Morty Character Database",
+                fontFamily = apiViewModel.font,
+                textAlign = TextAlign.Center
+            )
+        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color(0xBEB7DCEF),
             titleContentColor = Color(0xFF916036),
             navigationIconContentColor = Color.White,
             actionIconContentColor = Color.White
         ),
-        navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF916036))
-            }
-        },
-        actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search",
-                    tint = Color(0xFF916036))
-            }
-            IconButton(onClick = {  }) {
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "Menu",
-                    tint = Color(0xFF916036))
-            }
-        }
-    )
+
+        )
 }
 
 @Composable
-fun BottomBar(apiViewModel: APIViewModel) {
+fun BottomBar(
+    navController: NavController,
+    bottomNavItems: List<BottomNavScreens>
+) {
 
     BottomNavigation(
         backgroundColor = Color(0xBEB7DCEF),
         contentColor = Color(0xBEB7DCEF),
     ) {
-        BottomNavigationItem(
-            icon = { Icon(
-                Icons.Filled.Home,
-                contentDescription = "Home",
-                tint = Color(0xFF916036)) },
-            label = { Text(
-                text ="Home",
-                color = Color(0xFF916036),
-                fontFamily = apiViewModel.font
-                ) },
-            selected = true,
-            onClick = { /*TODO*/ },
-            selectedContentColor = Color.White,
-            unselectedContentColor = Color.White
-        )
-        BottomNavigationItem(
-            icon = { Icon(
-                Icons.Filled.Star,
-                contentDescription = "Star",
-                tint = Color(0xFF916036))
-                   },
-            label = { Text("Favs",
-                color = Color(0xFF916036),
-                fontFamily = apiViewModel.font
-                )
-                    },
-            selected = true,
-            onClick = { /*TODO*/ },
-            selectedContentColor = Color.White,
-            unselectedContentColor = Color.White
-        )
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        bottomNavItems.forEach { item ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = null,
+                        tint = Color(0xFF916036)
+                    )
+                },
+                selected = currentRoute == item.route,
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White,
+                alwaysShowLabel = false,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route)
+                    }
+                }
+            )
+        }
     }
 }
 

@@ -1,6 +1,11 @@
 package com.example.apilistapp.viewmodel
 
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +14,7 @@ import com.example.apilistapp.R
 import com.example.apilistapp.api.Repository
 import com.example.apilistapp.models.Characters
 import com.example.apilistapp.models.Result
+import com.example.apilistapp.navigation.BottomNavScreens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +30,18 @@ class APIViewModel : ViewModel() {
     private val _character = MutableLiveData<Result>()
     val character = _character
     var id = 0
+    val bottomNavItems = listOf(
+        BottomNavScreens.Home,
+        BottomNavScreens.Favorite
+    )
+    var fav by mutableStateOf(false)
+    var favIcon = Icons.Filled.Favorite
+    var unfavIcon = R.drawable.ic_unfav
+
+
+    var selectedFavIcon = if(fav){
+        favIcon
+    }else unfavIcon
 
 
     fun getCharacters() {
@@ -56,5 +74,8 @@ class APIViewModel : ViewModel() {
 
     fun set_Id(id: Int) {
         this.id = id
+    }
+    fun set_Fav(fav:Boolean){
+        this.fav = !fav
     }
 }
