@@ -8,30 +8,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -50,7 +37,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.apilistapp.viewmodel.APIViewModel
 import com.example.apilistapp.R
-import com.example.apilistapp.navigation.BottomNavScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -110,7 +96,6 @@ fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
                 modifier = Modifier
                     .padding(start = 192.dp, top = 32.dp)
                     .clickable {
-                        apiViewmodel.set_Fav(apiViewmodel.fav)
                     }
             ) {
                 FavButton(apiViewmodel)
@@ -174,17 +159,24 @@ fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
 
 @Composable
 fun FavButton(apiViewmodel: APIViewModel) {
+    val character by apiViewmodel.character.observeAsState()
+
 
     IconToggleButton(checked = apiViewmodel.fav, onCheckedChange = {
         apiViewmodel.fav = !apiViewmodel.fav
     }
     ) {
       Icon(
-          tint = Color(0xFF916036),
+          tint = Color(0xFFE46F92),
           modifier = Modifier
               .graphicsLayer {
                   scaleX = 1.3f
                   scaleY = 1.3f
+              }
+              .clickable {
+                  character?.let { apiViewmodel.saveFavorite(it)
+                      println(apiViewmodel.getFavorites())
+                  }
               },
           imageVector = if (apiViewmodel.fav){
               Icons.Filled.Favorite

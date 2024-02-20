@@ -1,6 +1,8 @@
 package com.example.apilistapp.models
 
-data class Characters(
+import com.google.gson.annotations.SerializedName
 
-    val results: List<Result>
+data class Characters(
+    @SerializedName("results")
+    val characters: List<Character>
 )

@@ -1,7 +1,7 @@
 package com.example.apilistapp.api
 
 import com.example.apilistapp.models.Characters
-import com.example.apilistapp.models.Result
+import com.example.apilistapp.models.Character
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -16,7 +16,7 @@ interface APIInterface {
 
     @GET("character/{id}")
 
-    suspend fun getCharacter(@Path("id") id:Int): Response<Result>
+    suspend fun getCharacter(@Path("id") id:Int): Response<Character>
 
 
     companion object {

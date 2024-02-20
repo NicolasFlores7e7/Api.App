@@ -17,17 +17,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,7 +43,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.apilistapp.R
 import com.example.apilistapp.models.Characters
-import com.example.apilistapp.models.Result
+import com.example.apilistapp.models.Character
 import com.example.apilistapp.navigation.BottomNavScreens
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.viewmodel.APIViewModel
@@ -109,7 +102,7 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
         LazyColumn(
             modifier = Modifier
         ) {
-            items(characters.results) {
+            items(characters.characters){
                 CharacterItem(character = it, apiViewModel, navController)
             }
         }
@@ -119,7 +112,7 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CharacterItem(character: Result, apiViewModel: APIViewModel, navController: NavController) {
+fun CharacterItem(character: Character, apiViewModel: APIViewModel, navController: NavController) {
 
     Card(
         border = BorderStroke(
@@ -207,8 +200,7 @@ fun BottomBar(
 ) {
 
     BottomNavigation(
-        backgroundColor = Color(0xBEB7DCEF),
-        contentColor = Color(0xBEB7DCEF),
+        backgroundColor = Color(0xFFC6E2F1),
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
