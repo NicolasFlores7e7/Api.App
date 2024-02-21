@@ -37,6 +37,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.apilistapp.viewmodel.APIViewModel
 import com.example.apilistapp.R
+import java.nio.file.WatchEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -159,33 +160,25 @@ fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
 
 @Composable
 fun FavButton(apiViewmodel: APIViewModel) {
-    val character by apiViewmodel.character.observeAsState()
+
+        Icon(
+            tint = Color(0xFFE46F92),
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = 1.3f
+                    scaleY = 1.3f
+                }
+                .clickable { apiViewmodel.character.value?.let { apiViewmodel.saveFavorite(it) } },
+            imageVector = if (apiViewmodel.fav) {
+                Icons.Filled.Favorite
+            } else {
+                Icons.Default.FavoriteBorder
+            },
+            contentDescription = null
+        )
+    }
 
 
-    IconToggleButton(checked = apiViewmodel.fav, onCheckedChange = {
-        apiViewmodel.fav = !apiViewmodel.fav
-    }
-    ) {
-      Icon(
-          tint = Color(0xFFE46F92),
-          modifier = Modifier
-              .graphicsLayer {
-                  scaleX = 1.3f
-                  scaleY = 1.3f
-              }
-              .clickable {
-                  character?.let { apiViewmodel.saveFavorite(it)
-                      println(apiViewmodel.getFavorites())
-                  }
-              },
-          imageVector = if (apiViewmodel.fav){
-              Icons.Filled.Favorite
-          } else {
-              Icons.Default.FavoriteBorder
-          },
-          contentDescription = null
-          )
-    }
-}
+
 
 

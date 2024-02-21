@@ -27,7 +27,7 @@ class APIViewModel : ViewModel() {
     val characters = _characters
     private val _character = MutableLiveData<Character>()
     val character = _character
-    private val _isFavorite = MutableLiveData(false)
+    private val _isFavorite = MutableLiveData<Boolean>()
     val isFavorite = _isFavorite
     private val _favorites = MutableLiveData<MutableList<Character>>()
     val favorites = _favorites
@@ -90,6 +90,7 @@ class APIViewModel : ViewModel() {
     fun saveFavorite(character: Character){
         CoroutineScope(Dispatchers.IO).launch {
             repository.saveAsFavorite(character)
+            fav = true
         }
     }
     fun deleteFavorite(character: Character){
@@ -97,4 +98,7 @@ class APIViewModel : ViewModel() {
             repository.deleteFavorite(character)
         }
     }
+
+
+
 }
