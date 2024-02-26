@@ -1,9 +1,6 @@
 package com.example.apilistapp.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.MutableLiveData
@@ -36,16 +33,18 @@ class APIViewModel : ViewModel() {
         BottomNavScreens.Home,
         BottomNavScreens.Favorite
     )
-    var page = 1
+    val page = MutableLiveData(1)
     fun getCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getCharacters(page)
+            val response = page.value?.let { repository.getCharacters(it) }
             withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    _characters.value = response.body()
-                    _loading.value = false
-                } else {
-                    Log.e("Error :", response.message())
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        _characters.value = response.body()
+                        _loading.value = false
+                    } else {
+                        Log.e("Error :", response.message())
+                    }
                 }
             }
         }
@@ -97,8 +96,13 @@ class APIViewModel : ViewModel() {
             repository.deleteFavorite(character)
         }
     }
-    fun favController(){
-        if(_isFavorite.value==true) _character.value?.let { deleteFavorite(it)}
-        else _character.value?.let { saveFavorite(it) }
+    fun favController(character: Character?, isFavorite: Boolean?) {
+        if (isFavorite == true) {
+            character?.let { deleteFavorite(it) }
+            _isFavorite.value = false
+        } else {
+            character?.let { saveFavorite(it) }
+            _isFavorite.value = true
+        }
     }
 }
