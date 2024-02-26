@@ -1,5 +1,6 @@
 package com.example.apilistapp.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -72,6 +73,7 @@ fun DetailedScreen(navController: NavController, apiViewModel: APIViewModel) {
 fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
     apiViewmodel.getCharacter()
     val character by apiViewmodel.character.observeAsState()
+    character?.let { apiViewmodel.isFavorite(it) }
 
     Column(
         modifier = Modifier
@@ -158,9 +160,12 @@ fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
     }
 }
 
+
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun FavButton(apiViewmodel: APIViewModel) {
-
+    val isFavorite by apiViewmodel.isFavorite.observeAsState()
+    val character by apiViewmodel.character.observeAsState()
         Icon(
             tint = Color(0xFFE46F92),
             modifier = Modifier
@@ -168,8 +173,12 @@ fun FavButton(apiViewmodel: APIViewModel) {
                     scaleX = 1.3f
                     scaleY = 1.3f
                 }
-                .clickable { apiViewmodel.character.value?.let { apiViewmodel.saveFavorite(it) } },
-            imageVector = if (apiViewmodel.fav) {
+                .clickable {
+                    character?.let { apiViewmodel.isFavorite(it) }
+                    apiViewmodel.favController()
+                    character?.let { apiViewmodel.isFavorite(it) }
+                },
+            imageVector = if (isFavorite == true) {
                 Icons.Filled.Favorite
             } else {
                 Icons.Default.FavoriteBorder

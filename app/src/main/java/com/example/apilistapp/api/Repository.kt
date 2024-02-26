@@ -7,7 +7,7 @@ import com.example.apilistapp.viewmodel.APIViewModel
 class Repository {
     private val apiInterface = APIInterface.create()
     val daoInterface = CharacterApplication.database.characterDao()
-    suspend fun getCharacters() = apiInterface.getCharacters()
+    suspend fun getCharacters(page:Int) = apiInterface.getCharacters(page)
     suspend fun getCharacter(id:Int) = apiInterface.getCharacter(id)
 
     suspend fun saveAsFavorite(character:Character) = daoInterface.addCharacter(character)

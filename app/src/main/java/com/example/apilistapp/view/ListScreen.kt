@@ -8,15 +8,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.IconButton
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +42,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -51,7 +64,7 @@ import com.example.apilistapp.viewmodel.APIViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
-   val bottomNavItems = apiViewModel.bottomNavItems
+    val bottomNavItems = apiViewModel.bottomNavItems
     Scaffold(
         topBar = { TopBar(apiViewModel) },
         bottomBar = { BottomBar(navController, bottomNavItems) },
@@ -102,11 +115,12 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
         LazyColumn(
             modifier = Modifier
         ) {
-            items(characters.characters){
+            items(characters.characters) {
                 CharacterItem(character = it, apiViewModel, navController)
             }
         }
     }
+    NavButtons(apiViewModel)
 }
 
 
@@ -225,6 +239,122 @@ fun BottomBar(
             )
         }
     }
+}
+
+@Composable
+fun NavButtons(apiViewModel: APIViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(0.95f),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+
+
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        Color(0xBEB7DCEF),
+                        shape = CircleShape
+                    )
+
+            ) {
+                IconButton(onClick = {
+                    if(apiViewModel.page>1){
+                    apiViewModel.page--
+                    println("pagina: ${apiViewModel.page}")
+                    }
+                    else {
+
+                    }
+                    apiViewModel.getCharacters()
+                },
+                    enabled = apiViewModel.page!=0
+                ) {
+
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFF916036),
+                        modifier = Modifier.size(48.dp)
+
+                    )
+
+                }
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            Box(
+                modifier = Modifier
+                    .background(
+                        Color(0xBEB7DCEF),
+                        shape = CircleShape
+                    )
+            ) {
+                IconButton(onClick = {
+
+                    apiViewModel.page++
+                    apiViewModel.getCharacters()
+                    println("pagina: ${apiViewModel.page}")
+                },
+                ) {
+
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Forward",
+                        tint = Color(0xFF916036),
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
+            }
+
+
+        }
+    }
+}
+@Composable
+fun AlertDialogExample(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String = "babababa",
+    dialogText: String = "sadw",
+
+    ) {
+    AlertDialog(
+
+        title = {
+            Text(text = dialogTitle)
+        },
+        text = {
+            Text(text = dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
 }
 
 

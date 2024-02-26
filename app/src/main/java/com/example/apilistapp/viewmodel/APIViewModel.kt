@@ -36,10 +36,10 @@ class APIViewModel : ViewModel() {
         BottomNavScreens.Home,
         BottomNavScreens.Favorite
     )
-    var fav by mutableStateOf(false)
+    var page = 1
     fun getCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = repository.getCharacters()
+            val response = repository.getCharacters(page)
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     _characters.value = response.body()
@@ -90,7 +90,6 @@ class APIViewModel : ViewModel() {
     fun saveFavorite(character: Character){
         CoroutineScope(Dispatchers.IO).launch {
             repository.saveAsFavorite(character)
-            fav = true
         }
     }
     fun deleteFavorite(character: Character){
@@ -98,7 +97,8 @@ class APIViewModel : ViewModel() {
             repository.deleteFavorite(character)
         }
     }
-
-
-
+    fun favController(){
+        if(_isFavorite.value==true) _character.value?.let { deleteFavorite(it)}
+        else _character.value?.let { saveFavorite(it) }
+    }
 }
