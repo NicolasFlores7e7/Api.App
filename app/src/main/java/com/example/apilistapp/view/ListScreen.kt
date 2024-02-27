@@ -18,16 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.IconButton
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,13 +34,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -55,11 +50,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.apilistapp.R
-import com.example.apilistapp.models.Characters
 import com.example.apilistapp.models.Character
+import com.example.apilistapp.models.Characters
 import com.example.apilistapp.navigation.BottomNavScreens
 import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.viewmodel.APIViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,8 +115,9 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
                 CharacterItem(character = it, apiViewModel, navController)
             }
         }
+        NavButtons(apiViewModel)
     }
-    NavButtons(apiViewModel)
+
 }
 
 
@@ -235,6 +232,7 @@ fun BottomBar(
                     if (currentRoute != item.route) {
                         navController.navigate(item.route)
                     }
+
                 }
             )
         }
@@ -243,6 +241,10 @@ fun BottomBar(
 
 @Composable
 fun NavButtons(apiViewModel: APIViewModel) {
+    val currentPage by apiViewModel.page.observeAsState(initial = 1)
+    LaunchedEffect(currentPage) {
+        apiViewModel.getCharacters()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize(0.95f),
@@ -251,110 +253,112 @@ fun NavButtons(apiViewModel: APIViewModel) {
 
 
     ) {
-        Row(
-            modifier = Modifier
-                .padding(start = 16.dp)
-        ) {
-            Box(
+        if (apiViewModel.page.value != null && apiViewModel.page.value!! > 1) {
+            Row(
                 modifier = Modifier
-                    .background(
-                        Color(0xBEB7DCEF),
-                        shape = CircleShape
-                    )
-
+                    .padding(start = 16.dp)
             ) {
-                IconButton(onClick = {
-                    if(apiViewModel.page>1){
-                    apiViewModel.page--
-                    println("pagina: ${apiViewModel.page}")
-                    }
-                    else {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            Color(0xBEB7DCEF),
+                            shape = CircleShape
+                        )
 
-                    }
-                    apiViewModel.getCharacters()
-                },
-                    enabled = apiViewModel.page!=0
                 ) {
+                    IconButton(
+                        onClick = {
+                            if (apiViewModel.page.value != null && apiViewModel.page.value!! > 1) {
+                                apiViewModel.page.value = apiViewModel.page.value!! -1
+                                println("pagina: ${apiViewModel.page}")
+                            }
+                            apiViewModel.getCharacters()
+                        },
+                        enabled = apiViewModel.page.value?.let { it > 1 } ?: false
+                    ) {
 
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFF916036),
-                        modifier = Modifier.size(48.dp)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color(0xFF916036),
+                            modifier = Modifier.size(48.dp)
 
-                    )
+                        )
 
+                    }
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            Color(0xBEB7DCEF),
+                            shape = CircleShape
+                        )
+                ) {
+                    IconButton(
+                        onClick = {
+
+                            if (apiViewModel.page.value != null && apiViewModel.page.value!! <= 20) {
+                                apiViewModel.page.value = apiViewModel.page.value!! + 1
+                                println("pagina: ${apiViewModel.page}")
+                            }
+                            apiViewModel.getCharacters()
+                            println("pagina: ${apiViewModel.page}")
+                        },
+                    ) {
+
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Forward",
+                            tint = Color(0xFF916036),
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                }
+
+
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            ) {
+                Spacer(Modifier.weight(1f))
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            Color(0xBEB7DCEF),
+                            shape = CircleShape
+                        )
+                ) {
+                    IconButton(
+                        onClick = {
+
+                            if (apiViewModel.page.value != null && apiViewModel.page.value!! <= 20) {
+                                apiViewModel.page.value = apiViewModel.page.value!! + 1
+                                println("pagina: ${apiViewModel.page}")
+                            }
+                            apiViewModel.getCharacters()
+                            println("pagina: ${apiViewModel.page}")
+                        },
+                    ) {
+
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Forward",
+                            tint = Color(0xFF916036),
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
                 }
             }
-
-            Spacer(Modifier.weight(1f))
-
-            Box(
-                modifier = Modifier
-                    .background(
-                        Color(0xBEB7DCEF),
-                        shape = CircleShape
-                    )
-            ) {
-                IconButton(onClick = {
-
-                    apiViewModel.page++
-                    apiViewModel.getCharacters()
-                    println("pagina: ${apiViewModel.page}")
-                },
-                ) {
-
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Forward",
-                        tint = Color(0xFF916036),
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            }
-
 
         }
     }
-}
-@Composable
-fun AlertDialogExample(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String = "babababa",
-    dialogText: String = "sadw",
 
-    ) {
-    AlertDialog(
-
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text("Confirm")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text("Dismiss")
-            }
-        }
-    )
 }
 
 

@@ -62,6 +62,7 @@ fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel){
                     contentDescription = "bg",
                     contentScale = ContentScale.FillBounds
                 )
+                FavsRecyclerView(apiViewModel,navController )
             }
         }
 
@@ -71,41 +72,19 @@ fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel){
 
 @Composable
 fun FavsRecyclerView(apiViewModel: APIViewModel, navController: NavController){
-    val showLoading: Boolean by apiViewModel.loading.observeAsState(true)
     val favorites: MutableList<Character> by apiViewModel.favorites.observeAsState(mutableListOf())
     val character by apiViewModel.character.observeAsState()
     apiViewModel.getFavorites()
-    if (showLoading) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .width(32.dp),
-                color = Color(0xFF916036),
-            )
-            Text(
-                text = "Loading...",
-                fontFamily = apiViewModel.font,
-                fontSize = 64.sp,
-                color = Color(0xFF916036)
 
-            )
-        }
-
-    } else {
         LazyColumn(
             modifier = Modifier
         ) {
             items(favorites.size){
-                character?.let { it1 -> FavItem(it1, apiViewModel,navController) }
+                character?.let { it -> FavItem(it, apiViewModel,navController) }
             }
         }
     }
-}
+
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

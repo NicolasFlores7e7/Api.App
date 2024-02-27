@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -60,7 +61,7 @@ fun DetailedScreen(navController: NavController, apiViewModel: APIViewModel) {
                     contentDescription = "bg",
                     contentScale = ContentScale.FillBounds
                 )
-                CharacterData(navController, apiViewModel)
+                CharacterData(apiViewModel)
             }
         }
 
@@ -70,7 +71,7 @@ fun DetailedScreen(navController: NavController, apiViewModel: APIViewModel) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
+fun CharacterData(apiViewmodel: APIViewModel) {
     apiViewmodel.getCharacter()
     val character by apiViewmodel.character.observeAsState()
     character?.let { apiViewmodel.isFavorite(it) }
@@ -161,31 +162,29 @@ fun CharacterData(navController: NavController, apiViewmodel: APIViewModel) {
 }
 
 
-@SuppressLint("SuspiciousIndentation")
 @Composable
-fun FavButton(apiViewmodel: APIViewModel) {
-    val isFavorite by apiViewmodel.isFavorite.observeAsState()
-    val character by apiViewmodel.character.observeAsState()
-        Icon(
-            tint = Color(0xFFE46F92),
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = 1.3f
-                    scaleY = 1.3f
-                }
-                .clickable {
-                    character?.let { apiViewmodel.isFavorite(it) }
-                    apiViewmodel.favController()
-                    character?.let { apiViewmodel.isFavorite(it) }
-                },
-            imageVector = if (isFavorite == true) {
-                Icons.Filled.Favorite
-            } else {
-                Icons.Default.FavoriteBorder
+fun FavButton(apiViewModel: APIViewModel) {
+    val isFavorite by apiViewModel.isFavorite.observeAsState(false)
+    val character by apiViewModel.character.observeAsState()
+
+    Icon(
+        tint = Color(0xFFE46F92),
+        modifier = Modifier
+            .graphicsLayer {
+                scaleX = 1.3f
+                scaleY = 1.3f
+            }
+            .clickable {
+                apiViewModel.favController(character, isFavorite)
             },
-            contentDescription = null
-        )
-    }
+        imageVector = if (isFavorite == true) {
+            Icons.Filled.Favorite
+        } else {
+            Icons.Default.FavoriteBorder
+        },
+        contentDescription = null
+    )
+}
 
 
 
