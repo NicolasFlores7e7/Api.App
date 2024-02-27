@@ -34,6 +34,10 @@ class APIViewModel : ViewModel() {
         BottomNavScreens.Favorite
     )
     val page = MutableLiveData(1)
+    private val _searchText = MutableLiveData<String>()
+    val searchText = _searchText
+    private val _searchBarBoolean = MutableLiveData(false)
+    val searchBarBoolean = _searchBarBoolean
     fun getCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
             val response = page.value?.let { repository.getCharacters(it) }
@@ -86,16 +90,19 @@ class APIViewModel : ViewModel() {
             }
         }
     }
-    fun saveFavorite(character: Character){
+
+    fun saveFavorite(character: Character) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.saveAsFavorite(character)
         }
     }
-    fun deleteFavorite(character: Character){
+
+    fun deleteFavorite(character: Character) {
         CoroutineScope(Dispatchers.IO).launch {
             repository.deleteFavorite(character)
         }
     }
+
     fun favController(character: Character?, isFavorite: Boolean?) {
         if (isFavorite == true) {
             character?.let { deleteFavorite(it) }
@@ -104,5 +111,19 @@ class APIViewModel : ViewModel() {
             character?.let { saveFavorite(it) }
             _isFavorite.value = true
         }
+    }
+
+    fun onSearchTextChange(keyWord: String) {
+        _searchText.value = keyWord
+        val charFiltered:Characters =
+            Characters(_characters.value!!.characters.filter { it.name.lowercase().contains(keyWord.lowercase()) })
+        _characters.value = charFiltered
+        if (_searchBarBoolean.value == false){
+            getCharacters()
+        }
+    }
+
+    fun searchActivator(searchBarBoolean: Boolean) {
+        _searchBarBoolean.value = !searchBarBoolean
     }
 }

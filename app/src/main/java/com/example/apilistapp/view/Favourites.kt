@@ -45,11 +45,11 @@ import com.example.apilistapp.navigation.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel){
+fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel) {
     val bottomNavItems = apiViewModel.bottomNavItems
     Scaffold(
         topBar = { TopBar(apiViewModel) },
-        bottomBar = { BottomBar(navController, bottomNavItems) },
+        bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
         content = { paddingValues ->
 
             Box(
@@ -62,28 +62,26 @@ fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel){
                     contentDescription = "bg",
                     contentScale = ContentScale.FillBounds
                 )
-                FavsRecyclerView(apiViewModel,navController )
+                FavsRecyclerView(apiViewModel, navController)
             }
         }
-
-
     )
 }
 
 @Composable
-fun FavsRecyclerView(apiViewModel: APIViewModel, navController: NavController){
+fun FavsRecyclerView(apiViewModel: APIViewModel, navController: NavController) {
     val favorites: MutableList<Character> by apiViewModel.favorites.observeAsState(mutableListOf())
-    val character by apiViewModel.character.observeAsState()
     apiViewModel.getFavorites()
-
+    if (favorites.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier
         ) {
-            items(favorites.size){
-                character?.let { it -> FavItem(it, apiViewModel,navController) }
+            items(favorites) {
+                FavItem(character = it, apiViewModel = apiViewModel, navController = navController)
             }
         }
     }
+}
 
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -138,7 +136,6 @@ fun FavItem(character: Character, apiViewModel: APIViewModel, navController: Nav
                         )
                     }
                 }
-
 
             }
         }

@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,12 +26,14 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -63,7 +68,7 @@ fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
     val bottomNavItems = apiViewModel.bottomNavItems
     Scaffold(
         topBar = { TopBar(apiViewModel) },
-        bottomBar = { BottomBar(navController, bottomNavItems) },
+        bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -108,14 +113,19 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
         }
 
     } else {
-        LazyColumn(
-            modifier = Modifier
-        ) {
-            items(characters.characters) {
-                CharacterItem(character = it, apiViewModel, navController)
+        Column (horizontalAlignment = Alignment.CenterHorizontally){
+            Spacer(modifier =Modifier.height(8.dp))
+            MySearchBar(apiViewModel)
+            LazyColumn(
+                modifier = Modifier
+            ) {
+                items(characters.characters) {
+                    CharacterItem(character = it, apiViewModel, navController)
+                }
             }
+            NavButtons(apiViewModel)
         }
-        NavButtons(apiViewModel)
+
     }
 
 }
@@ -184,12 +194,14 @@ fun CharacterItem(character: Character, apiViewModel: APIViewModel, navControlle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(apiViewModel: APIViewModel) {
+    val searchBarBoolean: Boolean by apiViewModel.searchBarBoolean.observeAsState(true)
+
     TopAppBar(
         title = {
             Text(
                 modifier = Modifier
                     .padding(32.dp),
-                text = "Rick & Morty Character Database",
+                text = "Rick & Morty Characters",
                 fontFamily = apiViewModel.font,
                 textAlign = TextAlign.Center
             )
@@ -200,14 +212,29 @@ fun TopBar(apiViewModel: APIViewModel) {
             navigationIconContentColor = Color.White,
             actionIconContentColor = Color.White
         ),
+        actions = {
+            IconButton(onClick = {
+                apiViewModel.searchActivator(searchBarBoolean)
+            }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = Color(0xFF916036),
+                    modifier = Modifier.size(32.dp)
+                )
 
-        )
+            }
+        }
+
+    )
 }
 
 @Composable
 fun BottomBar(
     navController: NavController,
-    bottomNavItems: List<BottomNavScreens>
+    bottomNavItems: List<BottomNavScreens>,
+    apiViewModel: APIViewModel
 ) {
 
     BottomNavigation(
@@ -231,6 +258,7 @@ fun BottomBar(
                 onClick = {
                     if (currentRoute != item.route) {
                         navController.navigate(item.route)
+                        apiViewModel.getFavorites()
                     }
 
                 }
@@ -269,7 +297,7 @@ fun NavButtons(apiViewModel: APIViewModel) {
                     IconButton(
                         onClick = {
                             if (apiViewModel.page.value != null && apiViewModel.page.value!! > 1) {
-                                apiViewModel.page.value = apiViewModel.page.value!! -1
+                                apiViewModel.page.value = apiViewModel.page.value!! - 1
                                 println("pagina: ${apiViewModel.page}")
                             }
                             apiViewModel.getCharacters()
@@ -360,6 +388,40 @@ fun NavButtons(apiViewModel: APIViewModel) {
     }
 
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MySearchBar(apiViewModel: APIViewModel) {
+    val searchText by apiViewModel.searchText.observeAsState("")
+    val isSearchBarVisible by apiViewModel.searchBarBoolean.observeAsState(false)
+
+    if (isSearchBarVisible) {
+        SearchBar(
+            query = searchText,
+            onQueryChange = { apiViewModel.onSearchTextChange(it) },
+            onSearch = { apiViewModel.onSearchTextChange(it) },
+            active = true,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search"
+                )
+            },
+            placeholder = { Text("Search") },
+            onActiveChange = {},
+            modifier = Modifier
+                .fillMaxHeight(0.11f)
+                .fillMaxWidth(0.9F)
+                .clip(CircleShape)
+
+
+        ) {
+        }
+    }
+}
+
+
 
 
 

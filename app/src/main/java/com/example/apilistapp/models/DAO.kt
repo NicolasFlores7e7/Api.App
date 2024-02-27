@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface CharacterDao{
-    @Query("SELECT * FROM  CharacterEntity")
+    @Query("SELECT * FROM CharacterEntity")
     suspend fun getAllCharacters(): MutableList<Character>
     @Query("SELECT * FROM CharacterEntity WHERE id = :id")
     suspend fun getCharacterById(id:Int): MutableList<Character>

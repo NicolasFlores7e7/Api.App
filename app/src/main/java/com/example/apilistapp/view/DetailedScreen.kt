@@ -48,7 +48,7 @@ fun DetailedScreen(navController: NavController, apiViewModel: APIViewModel) {
     val bottomNavItems = apiViewModel.bottomNavItems
     Scaffold(
         topBar = { TopBar(apiViewModel) },
-        bottomBar = { BottomBar(navController, bottomNavItems) },
+        bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
         content = { paddingValues ->
 
             Box(
