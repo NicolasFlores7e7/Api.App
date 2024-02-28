@@ -38,8 +38,6 @@ class APIViewModel : ViewModel() {
     val searchText = _searchText
     private val _searchBarBoolean = MutableLiveData(false)
     val searchBarBoolean = _searchBarBoolean
-    private val _charactersAPI = MutableLiveData<Characters>()
-    val charactersAPI = _charactersAPI
     fun getCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
             val response = page.value?.let { repository.getCharacters(it) }
@@ -62,7 +60,6 @@ class APIViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
                     _character.value = response.body()
-                    _charactersAPI.value = _characters.value
                     _loading.value = false
                 } else {
                     Log.e("Error: ", response.message())
@@ -118,13 +115,14 @@ class APIViewModel : ViewModel() {
 
     fun onSearchTextChange(keyWord: String) {
         _searchText.value = keyWord
-        val charFiltered:Characters =
-            Characters(_characters.value!!.characters.filter { it.name.lowercase().contains(keyWord.lowercase()) })
-        _characters.value = charFiltered
-        if (keyWord.isEmpty()){
-           _characters.value = _charactersAPI.value
+        if (keyWord.isNotEmpty()) {
+            val charFiltered = Characters(_characters.value!!.characters.filter { it.name.lowercase().contains(keyWord.lowercase()) })
+            _characters.value = charFiltered
+        } else {
+            getCharacters()
         }
     }
+
 
     fun searchActivator(searchBarBoolean: Boolean) {
         _searchBarBoolean.value = !searchBarBoolean

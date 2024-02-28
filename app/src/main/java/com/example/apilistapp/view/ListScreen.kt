@@ -34,7 +34,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -47,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,6 +84,7 @@ fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
                     contentScale = ContentScale.FillBounds
                 )
                 RecyclerView(navController, apiViewModel)
+                NavButtons(apiViewModel)
             }
         }
     )
@@ -113,8 +117,8 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
         }
 
     } else {
-        Column (horizontalAlignment = Alignment.CenterHorizontally){
-            Spacer(modifier =Modifier.height(8.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(8.dp))
             MySearchBar(apiViewModel)
             LazyColumn(
                 modifier = Modifier
@@ -123,7 +127,6 @@ fun RecyclerView(navController: NavController, apiViewModel: APIViewModel) {
                     CharacterItem(character = it, apiViewModel, navController)
                 }
             }
-            NavButtons(apiViewModel)
         }
 
     }
@@ -405,18 +408,38 @@ fun MySearchBar(apiViewModel: APIViewModel) {
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = "Search"
+                    contentDescription = "Search",
+                    tint = Color(0xFF916036)
                 )
             },
-            placeholder = { Text("Search") },
+            placeholder = {
+                Text(
+                    "Search",
+                    style = TextStyle(
+                        fontFamily = apiViewModel.font,
+                        fontSize = 16.sp
+                    ),
+                    color = Color(0xFF916036)
+                )
+            },
             onActiveChange = {},
+            colors = SearchBarDefaults.colors(
+                containerColor = Color(0xBEB7DCEF),
+                inputFieldColors = TextFieldDefaults.textFieldColors(
+                    focusedTextColor = Color(0xFF916036),
+                    unfocusedTextColor = Color(0xFF916036),
+                    cursorColor = Color(0xFF916036)
+                )
+
+            ),
+
             modifier = Modifier
                 .fillMaxHeight(0.11f)
                 .fillMaxWidth(0.9F)
-                .clip(CircleShape)
+                .clip(CircleShape),
 
 
-        ) {
+            ) {
         }
     }
 }
