@@ -38,6 +38,8 @@ class APIViewModel : ViewModel() {
     val searchText = _searchText
     private val _searchBarBoolean = MutableLiveData(false)
     val searchBarBoolean = _searchBarBoolean
+    private val _showTopBarIcon = MutableLiveData(true)
+    var showTopBarIcon = _showTopBarIcon
     fun getCharacters() {
         CoroutineScope(Dispatchers.IO).launch {
             val response = page.value?.let { repository.getCharacters(it) }
@@ -127,4 +129,8 @@ class APIViewModel : ViewModel() {
     fun searchActivator(searchBarBoolean: Boolean) {
         _searchBarBoolean.value = !searchBarBoolean
     }
+    fun searchIconActivator (searchBool: Boolean){
+        this.showTopBarIcon.value = searchBool
+    }
+
 }

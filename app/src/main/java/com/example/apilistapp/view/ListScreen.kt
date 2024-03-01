@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
@@ -68,7 +69,9 @@ import com.example.apilistapp.viewmodel.APIViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
+    apiViewModel.searchIconActivator(true)
     val bottomNavItems = apiViewModel.bottomNavItems
+    val scrollState = rememberScrollState()
     Scaffold(
         topBar = { TopBar(apiViewModel) },
         bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
@@ -198,7 +201,6 @@ fun CharacterItem(character: Character, apiViewModel: APIViewModel, navControlle
 @Composable
 fun TopBar(apiViewModel: APIViewModel) {
     val searchBarBoolean: Boolean by apiViewModel.searchBarBoolean.observeAsState(true)
-
     TopAppBar(
         title = {
             Text(
@@ -216,20 +218,20 @@ fun TopBar(apiViewModel: APIViewModel) {
             actionIconContentColor = Color.White
         ),
         actions = {
-            IconButton(onClick = {
-                apiViewModel.searchActivator(searchBarBoolean)
-            }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = null,
-                    tint = Color(0xFF916036),
-                    modifier = Modifier.size(32.dp)
-                )
-
+            if (apiViewModel.showTopBarIcon.value == true) {
+                IconButton(onClick = {
+                    apiViewModel.searchActivator(searchBarBoolean)
+                }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = Color(0xFF916036),
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
         }
-
     )
 }
 
@@ -398,6 +400,7 @@ fun NavButtons(apiViewModel: APIViewModel) {
 fun MySearchBar(apiViewModel: APIViewModel) {
     val searchText by apiViewModel.searchText.observeAsState("")
     val isSearchBarVisible by apiViewModel.searchBarBoolean.observeAsState(false)
+
 
     if (isSearchBarVisible) {
         SearchBar(

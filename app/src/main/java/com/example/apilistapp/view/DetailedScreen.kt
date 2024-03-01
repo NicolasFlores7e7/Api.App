@@ -41,11 +41,11 @@ import com.example.apilistapp.viewmodel.APIViewModel
 import com.example.apilistapp.R
 import java.nio.file.WatchEvent
 
-@OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun DetailedScreen(navController: NavController, apiViewModel: APIViewModel) {
     val bottomNavItems = apiViewModel.bottomNavItems
+    apiViewModel.searchIconActivator(false)
     Scaffold(
         topBar = { TopBar(apiViewModel) },
         bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },

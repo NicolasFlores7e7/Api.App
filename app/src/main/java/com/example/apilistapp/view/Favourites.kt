@@ -47,6 +47,7 @@ import com.example.apilistapp.navigation.Routes
 @Composable
 fun FavouritesScreen(navController: NavController, apiViewModel: APIViewModel) {
     val bottomNavItems = apiViewModel.bottomNavItems
+    apiViewModel.searchIconActivator(false)
     Scaffold(
         topBar = { TopBar(apiViewModel) },
         bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
