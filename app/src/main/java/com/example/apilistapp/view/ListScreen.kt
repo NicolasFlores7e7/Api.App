@@ -70,7 +70,6 @@ import com.example.apilistapp.viewmodel.APIViewModel
 fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
     apiViewModel.searchIconActivator(true)
     val bottomNavItems = apiViewModel.bottomNavItems
-    val scrollState = rememberScrollState()
     Scaffold(
         topBar = { TopBar(apiViewModel) },
         bottomBar = { BottomBar(navController, bottomNavItems, apiViewModel) },
