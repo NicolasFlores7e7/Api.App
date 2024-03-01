@@ -66,7 +66,6 @@ import com.example.apilistapp.navigation.Routes
 import com.example.apilistapp.viewmodel.APIViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, apiViewModel: APIViewModel) {
     apiViewModel.searchIconActivator(true)
@@ -302,9 +301,7 @@ fun NavButtons(apiViewModel: APIViewModel) {
                     IconButton(
                         onClick = {
                             if (apiViewModel.page.value != null && apiViewModel.page.value!! > 1) {
-                                apiViewModel.page.value = apiViewModel.page.value!! - 1
-                                println("pagina: ${apiViewModel.page}")
-                            }
+                                apiViewModel.page.value = apiViewModel.page.value!! - 1 }
                             apiViewModel.getCharacters()
                         },
                         enabled = apiViewModel.page.value?.let { it > 1 } ?: false
@@ -334,12 +331,8 @@ fun NavButtons(apiViewModel: APIViewModel) {
                         onClick = {
 
                             if (apiViewModel.page.value != null && apiViewModel.page.value!! <= 20) {
-                                apiViewModel.page.value = apiViewModel.page.value!! + 1
-                                println("pagina: ${apiViewModel.page}")
-                            }
-                            apiViewModel.getCharacters()
-                            println("pagina: ${apiViewModel.page}")
-                        },
+                                apiViewModel.page.value = apiViewModel.page.value!! + 1 }
+                            apiViewModel.getCharacters() },
                     ) {
 
                         Icon(
@@ -372,10 +365,8 @@ fun NavButtons(apiViewModel: APIViewModel) {
 
                             if (apiViewModel.page.value != null && apiViewModel.page.value!! <= 20) {
                                 apiViewModel.page.value = apiViewModel.page.value!! + 1
-                                println("pagina: ${apiViewModel.page}")
                             }
                             apiViewModel.getCharacters()
-                            println("pagina: ${apiViewModel.page}")
                         },
                     ) {
 
